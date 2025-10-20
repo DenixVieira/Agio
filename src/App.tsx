@@ -1,15 +1,16 @@
-import { useState } from 'react'
+import { BrowserRouter as Router } from "react-router-dom";
+import { Routes } from "./Components/routes/Routes";
+import { Footer } from "./Components/layout/Footer.tsx";
+import { Navbar } from "./components/layout/NavBar.tsx";
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <h1 class="text-3xl font-bold underline">
-        Hello world! Denilsinho!
-      </h1>
-    </>
-  )
+		return (
+				<Router>
+          <Navbar/>
+					{/* <Routes /> */}
+					<Footer />
+				</Router>
+		);
 }
 
 export default App
