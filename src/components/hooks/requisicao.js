@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const AppToken = "7d13020209974db37fb31397d1e3b05f9bd8ff1e"
+const AppToken = ""
 const headers = {
     "AppToken": AppToken,
     "Content-Type": "application/json",
