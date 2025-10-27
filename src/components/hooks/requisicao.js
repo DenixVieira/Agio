@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 const AppToken = ""
 const headers = {
     "AppToken": AppToken,
@@ -8,10 +9,10 @@ const headers = {
 
 export const sefazAPI = {
     consultarPrecosCombustivel: async (
-        codTipoCombustivel = 1,
+        codTipoCombustivel = 2,
         dias = 3,
-        latitude = -9.6432331,
-        longitude = -35.7190686,
+        latitude = -9.607793655858874,
+        longitude = -35.745427817498026,
         raio = 15
     ) => {
         const url = "http://api.sefaz.al.gov.br/sfz_nfce_api/api/public/consultarPrecosCombustivel"
@@ -24,7 +25,17 @@ export const sefazAPI = {
         }
         try {
             const response = await axios.post(url, body, { headers });
-            console.log("✅ Requisição Realizada", response.data);
+                const resultado = response.data.map(item => ({
+                razaoSocial: item.nomRazaoSocial,
+                cnpj: item.numCNPJ,
+                descricao: item.dscProduto,
+                nomBairro: item.nomBairro,
+                nomLogradouro: item.nomLogradouro,
+                dataUltimaVenda: item.dthEmissaoUltimaVenda,
+                valorultimaVenda: item.valUnitarioUltimaVenda,
+            }));
+
+            return resultado;
         } catch (error) {
             if (error.response) {
                 console.error("❌ Erro na API:", error.response.status, error.response.data);
@@ -53,7 +64,19 @@ export const sefazAPI = {
         }
         try {
             const response = await axios.post(url, body, { headers });
-            console.log("✅ Requisição Realizada", response.data);
+            console.log(response.data)
+
+            const resultado = response.data.map(item => ({
+                razaoSocial: item.nomRazaoSocial,
+                cnpj: item.numCNPJ,
+                descricao: item.dscProduto,
+                nomBairro: item.nomBairro,
+                valorMinimo: item.valMinimoVendido,
+                valorMaximo: item.valMaximoVendido,
+                dataUltimaVenda: item.dthEmissaoUltimaVenda
+            }));
+
+            return resultado;
         } catch (error) {
             if (error.response) {
                 console.error("❌ Erro na API:", error.response.status, error.response.data);
@@ -83,7 +106,17 @@ export const sefazAPI = {
         }
         try {
             const response = await axios.post(url, body, { headers });
-            console.log("✅ Requisição Realizada", response.data);
+            console.log(response.data.conteudo)
+            let teste = response.data.conteudo
+            const resultado = teste.map(item => ({
+                descricao: item.produto.descricao,
+                dataVenda: item.produto.venda.dataVenda,
+                valorVenda: item.produto.venda.valorVenda,
+                cnpj: item.estabelecimento.cnpj,
+                razaoSocial: item.estabelecimento.razaoSocial
+            }));
+
+            return resultado;
         } catch (error) {
             if (error.response) {
                 console.error("❌ Erro na API:", error.response.status, error.response.data);
@@ -95,16 +128,16 @@ export const sefazAPI = {
     },
 
     consultarNotasDeEstabelecimento: async (
-
+        descricao = "gasolina", cnpj = "15503894000100"
     ) => {
         const url = "http://api.sefaz.al.gov.br/sfz-economiza-alagoas-api/api/public/produto/pesquisa"
         const body = {
             "produto": {
-                "descricao": "LEITE"
+                "descricao": descricao
             },
             "estabelecimento": {
                 "individual": {
-                    "cnpj": "32136781000132"
+                    "cnpj": cnpj
                 }
             },
             "dias": 6,
@@ -113,7 +146,15 @@ export const sefazAPI = {
         }
         try {
             const response = await axios.post(url, body, { headers });
-            console.log("✅ Requisição Realizada", response.data.conteudo);
+            const resultado = response.data.conteudo.map(item => ({
+                descricao: item.produto.descricao,
+                dataVenda: item.produto.venda.dataVenda,
+                valorVenda: item.produto.venda.valorVenda,
+                cnpj: item.estabelecimento.cnpj,
+                razaoSocial: item.estabelecimento.razaoSocial
+            }));
+
+            return resultado;
         } catch (error) {
             if (error.response) {
                 console.error("❌ Erro na API:", error.response.status, error.response.data);
@@ -127,4 +168,4 @@ export const sefazAPI = {
 }
 
 
-sefazAPI.consultarNotasDeEstabelecimento()
+sefazAPI.consultarPrecosCombustivel() 

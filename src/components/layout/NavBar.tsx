@@ -14,42 +14,34 @@ export const Navbar = () => {
         <ul className="flex list-none items-center space-x-10">
           <li>
             <Link
-              to="/home"
-              className="text-[#060606] font-bold hover:underline"
+              to="/"
+              className="text-[#060606] font-bold hover:underline focus:underline text-lg"
             >
-              Home
+              Estabelecimento
             </Link>
           </li>
           <li>
             <Link
               to="/eventos"
-              className="text-[#060606] font-bold hover:underline"
+              className="text-[#060606] font-bold hover:underline focus:underline text-lg"
             >
-              Vendas Provedor
+              Produtos
             </Link>
           </li>
           <li>
             <Link
-              to="/minhas-inscricoes"
-              className="text-[#060606] font-bold hover:underline"
+              to="/valor-combustivel"
+              className="text-[#060606] font-bold hover:underline focus:underline text-lg"
             >
               Valor Combustível
             </Link>
           </li>
           <li>
             <Link
-              to="/criar-evento"
-              className="text-[#060606] font-bold hover:underline"
+              to="/codigo-de-barras"
+              className="text-[#060606] font-bold hover:underline focus:underline text-lg"
             >
-              Valores Estabelecimento
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/gerenciar-eventos"
-              className="text-[#060606] font-bold hover:underline"
-            >
-              Gerenciar Eventos
+              Codigo de Barras
             </Link>
           </li>
         </ul>
