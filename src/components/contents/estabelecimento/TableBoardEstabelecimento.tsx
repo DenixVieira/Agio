@@ -40,13 +40,13 @@ export const TableBoardEstabelecimento = ({ data }: TableBoardProps) => {
     return (
 
         <Table>
-            <TableHeader >
-                <TableRow>
-                    <TableHead>Razão Social</TableHead>
-                    <TableHead>CNPJ</TableHead>
-                    <TableHead className="w-[300px]">Descrição</TableHead>
-                    <TableHead >Data Venda</TableHead>
-                    <TableHead>Valor</TableHead>
+            <TableHeader  className="bg-cyan-500">
+                <TableRow >
+                    <TableHead className=" text-white">Razão Social</TableHead>
+                    <TableHead className=" text-white">CNPJ</TableHead>
+                    <TableHead className="w-[300px] text-white">Descrição</TableHead>
+                    <TableHead className=" text-white">Data Venda</TableHead>
+                    <TableHead className=" text-white">Valor</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>

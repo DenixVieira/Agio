@@ -20,14 +20,14 @@ export const Navbar = () => {
               Estabelecimento
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               to="/eventos"
               className="text-[#060606] font-bold hover:underline focus:underline text-lg"
             >
               Produtos
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link
               to="/valor-combustivel"

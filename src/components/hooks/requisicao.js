@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const AppToken = ""
+const AppToken = "7d13020209974db37fb31397d1e3b05f9bd8ff1e"
 const headers = {
     "AppToken": AppToken,
     "Content-Type": "application/json",
@@ -10,7 +10,6 @@ const headers = {
 export const sefazAPI = {
     consultarPrecosCombustivel: async (
         codTipoCombustivel = 2,
-        dias = 3,
         latitude = -9.607793655858874,
         longitude = -35.745427817498026,
         raio = 15
@@ -18,7 +17,7 @@ export const sefazAPI = {
         const url = "http://api.sefaz.al.gov.br/sfz_nfce_api/api/public/consultarPrecosCombustivel"
         const body = {
             "codTipoCombustivel": codTipoCombustivel,
-            "dias": dias,
+            "dias": 3,
             "latitude": latitude,
             "longitude": longitude,
             "raio": raio
@@ -128,7 +127,7 @@ export const sefazAPI = {
     },
 
     consultarNotasDeEstabelecimento: async (
-        descricao = "gasolina", cnpj = "15503894000100"
+        descricao = "argamassa", cnpj = "03656804000131"
     ) => {
         const url = "http://api.sefaz.al.gov.br/sfz-economiza-alagoas-api/api/public/produto/pesquisa"
         const body = {
@@ -153,7 +152,7 @@ export const sefazAPI = {
                 cnpj: item.estabelecimento.cnpj,
                 razaoSocial: item.estabelecimento.razaoSocial
             }));
-
+            console.log(response.data.conteudo)
             return resultado;
         } catch (error) {
             if (error.response) {
@@ -168,4 +167,4 @@ export const sefazAPI = {
 }
 
 
-sefazAPI.consultarPrecosCombustivel() 
+sefazAPI.consultarNotasDeEstabelecimento()

@@ -18,7 +18,7 @@ export const ConsultarEstabelecimento = () => {
       setError(null);
 
       try {
-        const dados = await sefazAPI.consultarNotasDeEstabelecimento( dataForm.descricaoProduto, dataForm.cnpjEstabelecimento);
+        const dados = await sefazAPI.consultarNotasDeEstabelecimento(dataForm.descricaoProduto, dataForm.cnpjEstabelecimento);
         if (!mounted) return;
 
         // Verifica se é array ou se tem dados em uma propriedade específica
@@ -42,21 +42,22 @@ export const ConsultarEstabelecimento = () => {
   // Log sempre que dataTable mudar
 
   return (
-    <div className=" flex min-h-screen flex-col">
-      <div className='w-[20em]'>
-        <FormEstabelecimento setDataForm={setDataForm} />
+    <div>
+      <div className=" flex min-h-screen mt-8 justify-evenly flex-direction: column;">
+        <div className='w-[25em]'>
+          <FormEstabelecimento setDataForm={setDataForm} />
+        </div>
+        <div className="flex justify-center w-[60%] max-h-90">
+          {error && <p>{error}</p>}
+          {loading ? (
+            <p>Carregando...</p>
+          ) : dataTable.length > 0 ? (
+            <TableBoardEstabelecimento data={dataTable} />
+          ) : (
+            <p>Nenhuma nota encontrada.</p>
+          )}
+        </div>
       </div>
-      <div className="flex justify-center w-[50%] max-h-128 bg-gray-100">
-        {error && <p>{error}</p>}
-        {loading ? (
-          <p>Carregando...</p>
-        ) : dataTable.length > 0 ? (
-          <TableBoardEstabelecimento data={dataTable} />
-        ) : (
-          <p>Nenhuma nota encontrada.</p>
-        )}
-      </div>
-
     </div>
   );
 };

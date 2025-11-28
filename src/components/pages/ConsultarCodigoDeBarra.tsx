@@ -18,7 +18,7 @@ export const ConsultarCodigoDeBarra = () => {
       setError(null);
 
       try {
-        const dados = await sefazAPI.consultarPrecosPorCodigoDeBarras(dataForm.codigoDeBarras,dataForm.lat,dataForm.long);
+        const dados = await sefazAPI.consultarPrecosPorCodigoDeBarras(dataForm.codigoDeBarras, dataForm.lat, dataForm.long);
         console.log("Dados brutos da API:", dados);
 
         if (!mounted) return;
@@ -39,14 +39,17 @@ export const ConsultarCodigoDeBarra = () => {
 
     fetchData();
     return () => { mounted = false; };
-  }, [,dataForm]);
+  }, [, dataForm]);
 
   // Log sempre que dataTable mudar
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <FormCodigoDeBarra setDataForm={setDataForm}/>
-      <div className="flex justify-center w-[50%] max-h-128 bg-gray-100">
+    <div className="flex min-h-screen mt-8 justify-evenly flex-direction: column;">
+      <div className='w-[25em]'>
+        <FormCodigoDeBarra setDataForm={setDataForm} />
+
+      </div>
+      <div className="flex justify-center w-[60%] max-h-100">
         {error && <p>{error}</p>}
         {loading ? (
           <p>Carregando...</p>

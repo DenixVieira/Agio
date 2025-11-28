@@ -43,15 +43,15 @@ export const TableBoardCodigoDeBarra = ({ data }: TableBoardProps) => {
     return (
 
         <Table>
-            <TableHeader >
+            <TableHeader className="bg-cyan-500" >
                 <TableRow>
-                    <TableHead >Bairro</TableHead>
-                    <TableHead>Razão Social</TableHead>
-                    <TableHead>CNPJ</TableHead>
-                    <TableHead className="w-[300px]">Descrição</TableHead>
-                    <TableHead>Data última venda</TableHead>
-                    <TableHead>Valor Mínimo</TableHead>
-                    <TableHead>Valor Máximo</TableHead>
+                    <TableHead  className=" text-white">Bairro</TableHead>
+                    <TableHead className=" text-white">Razão Social</TableHead>
+                    <TableHead className=" text-white">CNPJ</TableHead>
+                    <TableHead className="w-[300px] text-white">Descrição</TableHead>
+                    <TableHead className=" text-white">Data última venda</TableHead>
+                    <TableHead className=" text-white text-center">Valor Mínimo</TableHead>
+                    <TableHead className=" text-white text-center">Valor Máximo</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -69,8 +69,8 @@ export const TableBoardCodigoDeBarra = ({ data }: TableBoardProps) => {
                             <TableCell>{item.cnpj}</TableCell>
                             <TableCell className="font-medium">{item.descricao}</TableCell>
                             <TableCell>{formatDate(item.dataUltimaVenda)}</TableCell>
-                            <TableCell>{formatCurrency(item.valorMinimo)}</TableCell>
-                            <TableCell>{formatCurrency(item.valorMaximo)}</TableCell>
+                            <TableCell  className="text-right">{formatCurrency(item.valorMinimo)}</TableCell>
+                            <TableCell className="text-right">{formatCurrency(item.valorMaximo)}</TableCell>
                         </TableRow>
                     ))
                 )}

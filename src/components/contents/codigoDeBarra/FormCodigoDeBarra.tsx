@@ -12,28 +12,31 @@ export const FormCodigoDeBarra = ({ setDataForm }) => {
     };
 
     return (
-        <form className='' onSubmit={handleSubmit(onSubmit)}>
+        <form className='flex flex-col justify-center border-2 p-8 rounded-xl shadow-lg' onSubmit={handleSubmit(onSubmit)}>
             <div className=''>
                 <div className=''>
-                    <div className='' >
+                    <div className='flex flex-col mt-6' >
                         <label>Código de Barras (Obrigatório):</label>
                         <input
+                            className="w-[100%] border-2 mt-2 p-1 rounded-sm"
                             placeholder='Insira a descrição do produto'
                             {...register("codigoDeBarras", { required: true })}
                         />
                         {errors.nome && <span>Campo Obrigatório!</span>}
                     </div>
-                    <div className=''>
+                    <div className='flex flex-col mt-6'>
                         <label>Latitude:</label>
                         <input
+                            className="w-[100%] border-2 mt-2 p-1 rounded-sm"
                             placeholder='Insira a Latitude'
                             {...register("lat", { required: true })}
                         />
                         {errors.local && <span>Campo Obrigatório!</span>}
                     </div>
-                    <div className=''>
+                    <div className='flex flex-col mt-6'>
                         <label>Longitude:</label>
                         <input
+                            className="w-[100%] border-2 mt-2 p-1 rounded-sm"
                             placeholder='Insira a Longitude'
                             {...register("long", { required: true })}
                         />
@@ -43,7 +46,7 @@ export const FormCodigoDeBarra = ({ setDataForm }) => {
             </div>
             <input
                 type='submit'
-                className="w-[300px] bg-gray-100 hover:bg-gray-50"
+                className="w-[80%%] bg-cyan-500  text-white hover:bg-gray-50 mt-6 rounded-md p-2 "
                 value='Buscar notas'
             />
         </form>
