@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { TableBoardCodigoDeBarra } from '../contents/codigoDeBarra/TableBoardCodigoDeBarra';
+import { CompactTable } from '../contents/CompactTable';
 import { sefazAPI } from '../hooks/requisicao';
 import { FormCodigoDeBarra } from '../contents/codigoDeBarra/FormCodigoDeBarra';
+import { ValoresPorVenda } from '../contents/codigoDeBarra/ValoresPorVenda';
+import { ValoresPorBairro } from '../contents/codigoDeBarra/ValoresPorBairro';
 
 export const ConsultarCodigoDeBarra = () => {
   const [dataTable, setDataTable] = useState<any[]>([]);
@@ -44,22 +46,66 @@ export const ConsultarCodigoDeBarra = () => {
   // Log sempre que dataTable mudar
 
   return (
-    <div className="flex min-h-screen mt-8 justify-evenly flex-direction: column;">
-      <div className='w-[25em]'>
-        <FormCodigoDeBarra setDataForm={setDataForm} />
+    <div>
 
+      <div className="flex h-auto mt-8 justify-evenly flex-direction: column;">
+        <div className='w-[25em]'>
+          <FormCodigoDeBarra setDataForm={setDataForm} />
+
+        </div>
+        <div className="flex justify-center w-[60%] max-h-100">
+          {error && <p>{error}</p>}
+          {loading ? (
+            <p>Carregando...</p>
+          ) : dataTable.length > 0 ? (
+            <CompactTable
+              data={dataTable}
+              columns={[
+                { header: "Bairro", accessor: "nomBairro", width: "w-[180px]" },
+                { header: "Razão Social", accessor: "razaoSocial", width: "w-[120px]" },
+                { header: "CNPJ", accessor: "cnpj", width: "w-[150px]" },
+                { header: "Descrição", accessor: "descricao", width: "w-[250px]" },
+                {
+                  header: "Data última venda",
+                  accessor: "dataUltimaVenda",
+                  width: "w-[150px]",
+                  formatter: (val) => new Date(val).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })
+                },
+                {
+                  header: "Valor Mínimo",
+                  accessor: "valorMinimo",
+                  width: "w-[80px]",
+                  align: "right",
+                  formatter: (val) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val)
+                },
+                {
+                  header: "Valor Máximo",
+                  accessor: "valorMaximo",
+                  width: "w-[80px]",
+                  align: "right",
+                  formatter: (val) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val)
+                },
+              ]}
+            />
+
+          ) : (
+            <p>Nenhuma nota encontrada.</p>
+          )}
+        </div>
       </div>
-      <div className="flex justify-center w-[60%] max-h-100">
+      <div className="flex justify-center w-[100%] min-h-100 m-[30px]">
         {error && <p>{error}</p>}
         {loading ? (
           <p>Carregando...</p>
         ) : dataTable.length > 0 ? (
-          <TableBoardCodigoDeBarra data={dataTable} />
+          <div className="flex justify-evenly w-[100%] m-[10px]">
+            <ValoresPorVenda />
+            <ValoresPorBairro />
+          </div>
         ) : (
           <p>Nenhuma nota encontrada.</p>
         )}
       </div>
-
     </div>
   );
 };

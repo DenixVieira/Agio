@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { TableBoardEstabelecimento } from '../contents/estabelecimento/TableBoardEstabelecimento';
+import { CompactTable } from '../contents/CompactTable';
 import { sefazAPI } from '../hooks/requisicao';
 import { FormEstabelecimento } from '../contents/estabelecimento/FormEstabelecimento';
 
@@ -52,11 +52,33 @@ export const ConsultarEstabelecimento = () => {
           {loading ? (
             <p>Carregando...</p>
           ) : dataTable.length > 0 ? (
-            <TableBoardEstabelecimento data={dataTable} />
+            <CompactTable
+              data={dataTable}
+              columns={[
+                { header: "Razão Social", accessor: "razaoSocial", width: "w-[180px]" },
+                { header: "CNPJ", accessor: "cnpj", width: "w-[150px]" },
+                { header: "Descrição", accessor: "descricao", width: "w-[250px]" },
+                {
+                  header: "Data Venda",
+                  accessor: "dataVenda",
+                  width: "w-[150px]",
+                  formatter: (val) => new Date(val).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })
+                },
+                {
+                  header: "Valor",
+                  accessor: "valorVenda",
+                  width: "w-[80px]",
+                  align: "right",
+                  formatter: (val) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val)
+                },
+              ]}
+            />
+
           ) : (
             <p>Nenhuma nota encontrada.</p>
           )}
         </div>
+        
       </div>
     </div>
   );

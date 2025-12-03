@@ -15,14 +15,24 @@ export const FormCombustivel = ({ setDataForm }) => {
         <form className='flex flex-col justify-center border-2 p-8 rounded-xl shadow-lg' onSubmit={handleSubmit(onSubmit)}>
             <div className=''>
                 <div className=''>
-                    <div className='flex flex-col mt-6' >
+                    <div className="flex flex-col mt-6">
                         <label>Tipo de Combustível:</label>
-                        <input
-                            className="w-[100%] border-2 mt-2 p-1 rounded-sm"
-                            placeholder='Insira a descrição do produto'
+                        <select
+                            className="w-full border-2 mt-2 p-1 rounded-sm"
                             {...register("tipoCombustivel", { required: true })}
-                        />
-                        {errors.nome && <span>Campo Obrigatório!</span>}
+                            defaultValue=""
+                        >
+                            <option value="" disabled>
+                                Selecione o tipo
+                            </option>
+                            <option value="1">Gasolina Comum</option>
+                            <option value="2">Gasolina Aditivada</option>
+                            <option value="3">Etanol</option>
+                            <option value="4">Diesel</option>
+                        </select>
+                        {errors.tipoCombustivel && (
+                            <span className="text-red-500 text-sm">Campo Obrigatório!</span>
+                        )}
                     </div>
                     <div className='flex flex-col mt-6'>
                         <label>Latitude:</label>

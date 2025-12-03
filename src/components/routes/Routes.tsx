@@ -16,11 +16,7 @@ export const Routes = () => {
 		{
 			path: "/valor-combustivel",
 			element: <ConsultarValorCombustivel/>,
-		},
-		// {
-		// 	path: "/home",
-		// 	element: <PrivateRoute element={<Home />} />,
-		// },
+		}
 	];
 	let router = useRoutes(routes);
 	return router;
