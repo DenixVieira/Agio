@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { CompactTable } from '../contents/CompactTable';
 import { sefazAPI } from '../hooks/requisicao';
 import { FormEstabelecimento } from '../contents/estabelecimento/FormEstabelecimento';
+import { Periodico } from '../contents/estabelecimento/Periodico';
 
 export const ConsultarEstabelecimento = () => {
   const [dataTable, setDataTable] = useState<any[]>([]);
@@ -78,7 +79,19 @@ export const ConsultarEstabelecimento = () => {
             <p>Nenhuma nota encontrada.</p>
           )}
         </div>
-        
+
+      </div>
+      <div className="flex justify-center w-[100%] min-h-100 m-[30px]">
+        {error && <p>{error}</p>}
+        {loading ? (
+          <p>Carregando...</p>
+        ) : dataTable.length > 0 ? (
+          <div className="flex justify-evenly w-[100%] m-[10px]">
+            <Periodico/>
+          </div>
+        ) : (
+          <p>Nenhuma nota encontrada.</p>
+        )}
       </div>
     </div>
   );
