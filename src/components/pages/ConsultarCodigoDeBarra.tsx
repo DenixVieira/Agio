@@ -53,7 +53,7 @@ export const ConsultarCodigoDeBarra = () => {
           <FormCodigoDeBarra setDataForm={setDataForm} />
 
         </div>
-        <div className="flex justify-center w-[60%] max-h-100">
+        <div className="flex justify-center w-[60%] max-h-100 border">
           {error && <p>{error}</p>}
           {loading ? (
             <p>Carregando...</p>
