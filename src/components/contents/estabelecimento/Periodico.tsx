@@ -20,33 +20,30 @@ import {
 
 export const description = "A simple area chart"
 
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-]
-
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  quantidade: {
+    label: "Quantidade",
     color: "var(--chart-1)",
   },
-} satisfies ChartConfig
+  totalVendido: {
+    label: "Receita",
+    color: "var(--chart-1)",
+  },
+} satisfies ChartConfig;
 
-export function Periodico() {
+export function Periodico({ chartData }: { chartData: any[] }) {
+
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle>Area Chart</CardTitle>
+        <CardTitle>Gráfico Períodico de Receita</CardTitle>
         <CardDescription>
-          Showing total visitors for the last 6 months
+          Receita adquirida nos últimos 6 dias!
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={chartConfig}
+          className="w-full h-[300px] aspect-auto">
           <AreaChart
             accessibilityLayer
             data={chartData}
@@ -57,38 +54,38 @@ export function Periodico() {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
+              dataKey="dia"
+              tickLine={true}
+              axisLine={true}
               tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value) => value.slice(0, 5)}
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent indicator="line" />}
+              content={({ active, payload }) => {
+                if (!active || !payload?.length) return null;
+
+                const data = payload[0].payload;
+
+                return (
+                  <div className="rounded-md border bg-background p-2 text-sm shadow-md">
+                    <p className="font-medium">{data.dia}</p>
+                    <p>📦 quantidade: <b>{data.quantidade}</b></p>
+                    <p>💰 Receita: <b>R$ {data.totalVendido.toFixed(2)}</b></p>
+                  </div>
+                );
+              }}
             />
             <Area
-              dataKey="desktop"
+              dataKey="totalVendido"
               type="natural"
-              fill="var(--color-desktop)"
+              fill="var(--color-totalVendido)"
               fillOpacity={0.4}
-              stroke="var(--color-desktop)"
+              stroke="var(--color-totalVendido)"
             />
           </AreaChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 leading-none font-medium">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="text-muted-foreground flex items-center gap-2 leading-none">
-              January - June 2024
-            </div>
-          </div>
-        </div>
-      </CardFooter>
     </Card>
   )
 }

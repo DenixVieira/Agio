@@ -36,35 +36,38 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function ValoresPorVenda() {
-  return (
-    <div className="w-1/3 mt-20px">
+export function ValoresPorVenda({ chartData }: { chartData: any[] }) {
+  // 🔥 Ordenar por quantidade (mais usados primeiro) e pegar só os Top 10
+  const top10 = [...chartData]
+    .sort((a, b) => b.quantidade - a.quantidade)
+    .slice(0, 10)
+    .map((item) => ({
+      ...item,
+      valorFormatado: Number(item.valor).toFixed(2),
+    }));
 
+  return (
+    <div className="w-1/3 ">
       <Card>
         <CardHeader>
-          <CardTitle>Valores por Venda</CardTitle>
-          <CardDescription>Gráfico de barras: valores por venda</CardDescription>
+          <CardTitle>Valor X Venda</CardTitle>
+          <CardDescription>Ranking de valores x quantidade vendido por Estabelecimento.</CardDescription>
         </CardHeader>
 
         <CardContent>
-          {/*  
-          ATENÇÃO:
-          - w-[800px] controla a largura
-          - h-[300px] garante que o ResponsiveContainer tenha altura
-          - aspect-auto remove o aspect-video padrão
-        */}
           <ChartContainer
             config={chartConfig}
             className="w-full h-[300px] aspect-auto"
           >
-            <BarChart accessibilityLayer data={chartData}>
+            <BarChart accessibilityLayer data={top10}>
               <CartesianGrid vertical={false} />
+
               <XAxis
-                dataKey="month"
+                dataKey="valorFormatado"
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
-                tickFormatter={(value) => value.slice(0, 3)}
+                tickFormatter={(value) => `R$ ${value}`}
               />
 
               <ChartTooltip
@@ -72,21 +75,21 @@ export function ValoresPorVenda() {
                 content={<ChartTooltipContent hideLabel />}
               />
 
-              {/*  
-              fill usa a variável criada automaticamente pelo ChartStyle:
-              --color-desktop
-            */}
-              <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8} />
+              <Bar
+                dataKey="quantidade"
+                fill="var(--color-desktop)"
+                radius={8}
+              />
             </BarChart>
           </ChartContainer>
         </CardContent>
 
         <CardFooter className="flex-col items-start gap-2 text-sm">
           <div className="flex gap-2 leading-none font-medium">
-            Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+            Exibindo apenas os valores mais usados <TrendingUp className="h-4 w-4" />
           </div>
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

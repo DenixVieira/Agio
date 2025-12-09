@@ -3,12 +3,43 @@ import { CompactTable } from '../contents/CompactTable';
 import { sefazAPI } from '../hooks/requisicao';
 import { FormEstabelecimento } from '../contents/estabelecimento/FormEstabelecimento';
 import { Periodico } from '../contents/estabelecimento/Periodico';
+import { Loader } from '../layout/Loader';
+
+const formatVendaPorDia = (dados: any[]) => {
+  const mapa = dados.reduce((acc, item) => {
+    const data = new Date(item.dataVenda);
+    const diaFormatado = data.toLocaleDateString("pt-BR");
+
+    if (!acc[diaFormatado]) {
+      acc[diaFormatado] = {
+        dia: diaFormatado,
+        quantidade: 0,
+        totalVendido: 0,
+      };
+    }
+
+    acc[diaFormatado].quantidade += 1;
+    acc[diaFormatado].totalVendido += item.valorVenda;
+
+    return acc;
+  }, {});
+
+  return Object.values(mapa).sort(
+  (a: any, b: any) =>
+    new Date(a.dia.split("/").reverse().join("-")).getTime() -
+    new Date(b.dia.split("/").reverse().join("-")).getTime()
+);
+
+};
+
+
 
 export const ConsultarEstabelecimento = () => {
   const [dataTable, setDataTable] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dataForm, setDataForm] = useState<any[]>([]);
+  const [dataGrafic,setDataGrafic] = useState<any[]>([]);
 
   useEffect(() => {
     console.log(dataForm)
@@ -24,6 +55,8 @@ export const ConsultarEstabelecimento = () => {
 
         // Verifica se é array ou se tem dados em uma propriedade específica
         const notas = Array.isArray(dados) ? dados : dados?.data ?? [];
+        const data = formatVendaPorDia(notas)
+        setDataGrafic(data);
         setDataTable(notas);
 
       } catch (err) {
@@ -44,14 +77,14 @@ export const ConsultarEstabelecimento = () => {
 
   return (
     <div>
-      <div className=" flex min-h-screen mt-8 justify-evenly flex-direction: column;">
+      <div className="flex h-auto mt-8 justify-evenly flex-direction: column items-center ">
         <div className='w-[25em]'>
           <FormEstabelecimento setDataForm={setDataForm} />
         </div>
-        <div className="flex justify-center w-[60%] max-h-90">
+        <div className="flex justify-center w-[60%] max-h-100 min-h-full">
           {error && <p>{error}</p>}
           {loading ? (
-            <p>Carregando...</p>
+            <Loader/>
           ) : dataTable.length > 0 ? (
             <CompactTable
               data={dataTable}
@@ -81,13 +114,13 @@ export const ConsultarEstabelecimento = () => {
         </div>
 
       </div>
-      <div className="flex justify-center w-[100%] min-h-100 m-[30px]">
+      <div className="flex justify-center min-h-100 m-[30px] items-center">
         {error && <p>{error}</p>}
         {loading ? (
-          <p>Carregando...</p>
+          <Loader/>
         ) : dataTable.length > 0 ? (
-          <div className="flex justify-evenly w-[100%] m-[10px]">
-            <Periodico/>
+          <div className="flex w-full p-[10px]">
+            <Periodico chartData={dataGrafic} />
           </div>
         ) : (
           <p>Nenhuma nota encontrada.</p>

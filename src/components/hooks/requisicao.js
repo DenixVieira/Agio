@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const AppToken = "7d13020209974db37fb31397d1e3b05f9bd8ff1e"
+const AppToken = 
 const headers = {
     "AppToken": AppToken,
     "Content-Type": "application/json",
@@ -63,8 +63,6 @@ export const sefazAPI = {
         }
         try {
             const response = await axios.post(url, body, { headers });
-            console.log(response.data)
-
             const resultado = response.data.map(item => ({
                 razaoSocial: item.nomRazaoSocial,
                 cnpj: item.numCNPJ,

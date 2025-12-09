@@ -27,7 +27,7 @@ export const CompactTable = <T extends Record<string, any>>({
     maxHeight = "600px",
 }: CompactTableProps<T>) => {
     return (
-        <div className={`w-full overflow-x-auto max-h-[${maxHeight}]`}>
+        <div className={`w-full overflow-x-auto max-h-[${maxHeight}] border-3`}>
             <Table className="text-xs">
                 <TableHeader>
                     <TableRow>

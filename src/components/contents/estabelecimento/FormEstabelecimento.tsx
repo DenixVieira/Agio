@@ -19,8 +19,8 @@ export const FormEstabelecimento = ({ setDataForm }) => {
 
 
     return (
-        <form className='flex flex-col justify-center border-2 p-8 rounded-xl shadow-lg' onSubmit={handleSubmit(onSubmit)}>
-            <p>Pesquise produtos em seus Estabelecimento:</p>
+        <form className='flex flex-col justify-center border-2  p-8 rounded-xl shadow-lg' onSubmit={handleSubmit(onSubmit)}>
+            <p className="font-bold">Pesquise produtos em seus Estabelecimento:</p>
             <div className=''>
                 <div className=''>
                     <div className='flex flex-col mt-6 '>

@@ -4,12 +4,82 @@ import { sefazAPI } from '../hooks/requisicao';
 import { FormCodigoDeBarra } from '../contents/codigoDeBarra/FormCodigoDeBarra';
 import { ValoresPorVenda } from '../contents/codigoDeBarra/ValoresPorVenda';
 import { ValoresPorBairro } from '../contents/codigoDeBarra/ValoresPorBairro';
+import { Loader } from '../layout/Loader';
+
+type DadoPosto = {
+  cnpj: string;
+  dataUltimaVenda: string;
+  descricao: string;
+  nomBairro: string;
+  razaoSocial: string;
+  valorMaximo: number;
+  valorMinimo: number;
+};
+
+type ResultadoBairro = {
+  bairro: string;
+  media: number;
+  postos: number;
+};
+
+type ResultadoValor = {
+  valor: number;
+  quantidade: number;
+};
+
+type ResultadoTransformacao = {
+  porBairro: ResultadoBairro[];
+  porValor: ResultadoValor[];
+};
+
+
+export function transformarDados(dados: DadoPosto[]) {
+  const bairros = new Map<string, { soma: number; quantidade: number }>();
+  const valores = new Map<number, number>();
+
+  for (const item of dados) {
+    const { nomBairro, valorMaximo } = item;
+    const valor = Number(valorMaximo);
+
+    // --- Agrupamento por Bairro ---
+    if (!bairros.has(nomBairro)) {
+      bairros.set(nomBairro, { soma: 0, quantidade: 0 });
+    }
+
+    const infoBairro = bairros.get(nomBairro)!;
+    infoBairro.soma += valor;
+    infoBairro.quantidade++;
+
+    // --- Agrupamento por Valor ---
+    const precoNormalizado = Number(valor.toFixed(2));
+    valores.set(precoNormalizado, (valores.get(precoNormalizado) || 0) + 1);
+  }
+
+  const porBairro = [...bairros.entries()].map(([bairro, info]) => ({
+    bairro,
+    media: Number((info.soma / info.quantidade).toFixed(2)),
+    estabelecimentos: info.quantidade, // 🔥 novo nome
+  }));
+
+  const porValor = [...valores.entries()].map(([valor, quantidade]) => ({
+    valor,
+    quantidade,
+  }));
+
+  return { porBairro, porValor };
+}
+
+
+
+
 
 export const ConsultarCodigoDeBarra = () => {
   const [dataTable, setDataTable] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dataForm, setDataForm] = useState<any[]>([]);
+  const [graficDataBairro, setGraficDataBairro] = useState<any[]>([]);
+  const [graficDataValor, setGraficDataValor] = useState<any[]>([]);
 
   useEffect(() => {
     console.log(dataForm)
@@ -27,6 +97,9 @@ export const ConsultarCodigoDeBarra = () => {
 
         // Verifica se é array ou se tem dados em uma propriedade específica
         const notas = Array.isArray(dados) ? dados : dados?.data ?? [];
+        const resultado = transformarDados(notas);
+        setGraficDataBairro(resultado.porBairro)
+        setGraficDataValor(resultado.porValor)
         setDataTable(notas);
 
       } catch (err) {
@@ -48,15 +121,15 @@ export const ConsultarCodigoDeBarra = () => {
   return (
     <div>
 
-      <div className="flex h-auto mt-8 justify-evenly flex-direction: column;">
+      <div className="flex h-auto mt-8 justify-evenly flex-direction: column items-center ">
         <div className='w-[25em]'>
           <FormCodigoDeBarra setDataForm={setDataForm} />
 
         </div>
-        <div className="flex justify-center w-[60%] max-h-100 border">
+        <div className="flex justify-center w-[60%] max-h-100 min-h-full">
           {error && <p>{error}</p>}
           {loading ? (
-            <p>Carregando...</p>
+            <Loader />
           ) : dataTable.length > 0 ? (
             <CompactTable
               data={dataTable}
@@ -93,14 +166,14 @@ export const ConsultarCodigoDeBarra = () => {
           )}
         </div>
       </div>
-      <div className="flex justify-center w-[100%] min-h-100 m-[30px]">
+      <div className="flex justify-center w-[100%] min-h-100 m-[30px] items-center">
         {error && <p>{error}</p>}
         {loading ? (
-          <p>Carregando...</p>
+          <Loader />
         ) : dataTable.length > 0 ? (
           <div className="flex justify-evenly w-[100%] m-[10px]">
-            <ValoresPorVenda />
-            <ValoresPorBairro />
+            <ValoresPorBairro chartData={graficDataBairro}/>
+            <ValoresPorVenda chartData={graficDataValor}/>
           </div>
         ) : (
           <p>Nenhuma nota encontrada.</p>

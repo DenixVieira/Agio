@@ -1,7 +1,7 @@
 "use client"
 
 import { TrendingUp } from "lucide-react"
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import {
   Card,
@@ -11,7 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../../ui/card"
-import type { ChartConfig } from "../../ui/chart"
 import {
   ChartContainer,
   ChartTooltip,
@@ -20,73 +19,102 @@ import {
 
 export const description = "A bar chart"
 
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-]
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  media: {
+    label: "Preço Médio",
     color: "var(--chart-1)",
   },
-} satisfies ChartConfig
+};
 
-export function ValoresPorBairro() {
+export function ValoresPorBairro({
+  chartData,
+}: {
+  chartData: BairroResumo[];
+}) {
+
+
+  console.log(chartData)
+  // ---- 🔥 FILTRAR OS 10 BAIRROS COM MAIS estabelecimentos ----
+  const top10 = [...chartData]
+    .sort((a, b) => b.estabelecimentos - a.estabelecimentos)
+    .slice(0, 10);
+
   return (
-    <div className="w-1/3">
-
+    <div className="w-full md:w-1/3">
       <Card>
         <CardHeader>
-          <CardTitle>Valores por bairro</CardTitle>
-          <CardDescription>Gráfico de barras: Valores por bairro</CardDescription>
+          <CardTitle>Top 10 Valores vendidos nos bairros</CardTitle>
+          <CardDescription>
+            Preço médio dos valores máximo do produto em determinados bairros
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
-          {/*  
-          ATENÇÃO:
-          - w-[800px] controla a largura
-          - h-[300px] garante que o ResponsiveContainer tenha altura
-          - aspect-auto remove o aspect-video padrão
-        */}
           <ChartContainer
             config={chartConfig}
-            className="w-full h-[300px] aspect-auto"
+            className="w-full h-[350px] aspect-auto"
           >
-            <BarChart accessibilityLayer data={chartData}>
+            <BarChart data={top10} layout="vertical">
               <CartesianGrid vertical={false} />
+
+              {/* 🧭 Eixo Y mostra o nome do bairro */}
+              <YAxis dataKey="bairro" type="category" width={90} />
+
+              {/* 📏 Eixo X baseado na quantidade de estabelecimentos */}
               <XAxis
-                dataKey="month"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-                tickFormatter={(value) => value.slice(0, 3)}
+                type="number"
+                tickFormatter={(value) => `${value} estabelecimentos`}
               />
 
+              {/* Tooltip customizado */}
               <ChartTooltip
                 cursor={false}
-                content={<ChartTooltipContent hideLabel />}
+                content={
+                  <ChartTooltipContent
+                    formatter={(value, _, data) => (
+                      <>
+                        <p><strong>Bairro:</strong> {data.payload.bairro}</p>
+                        <p><strong>Média:</strong> R$ {data.payload.media.toFixed(2)}</p>
+                        <p><strong>estabelecimentos:</strong> {data.payload.estabelecimentos}</p>
+                      </>
+                    )}
+                  />
+                }
               />
 
-              {/*  
-              fill usa a variável criada automaticamente pelo ChartStyle:
-              --color-desktop
-            */}
-              <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8} />
+              {/* 📌 BARRA COM TEXTO DA MÉDIA DENTRO */}
+              <Bar
+                dataKey="estabelecimentos"
+                fill="var(--color-media)"
+                radius={6}
+                label={({ x, y, width, payload }) => {
+                  if (!payload?.payload) return null;
+
+                  return (
+                    <text
+                      x={x + width - 10}
+                      y={y + 15}
+                      fill="#fff"
+                      fontSize={12}
+                      textAnchor="end"
+                      fontWeight="bold"
+                    >
+                      R$ {payload.payload.media.toFixed(2)}
+                    </text>
+                  );
+                }}
+              />
             </BarChart>
           </ChartContainer>
         </CardContent>
 
         <CardFooter className="flex-col items-start gap-2 text-sm">
           <div className="flex gap-2 leading-none font-medium">
-            Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+            Exibindo os bairros mais relevantes <TrendingUp className="h-4 w-4" />
           </div>
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

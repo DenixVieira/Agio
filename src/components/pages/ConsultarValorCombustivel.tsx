@@ -4,12 +4,84 @@ import { sefazAPI } from '../hooks/requisicao';
 import { FormCombustivel } from '../contents/combustivel/FormCombustivel';
 import { ValoresPorEstabelecimento } from '../contents/combustivel/ValoresPorEstabelecimento';
 import { ValoresPorQuantidade } from '../contents/combustivel/ValoresPorQuantidade';
+import { Loader } from '../layout/Loader';
+
+// Define o formato esperado da API
+export interface DadoPosto {
+  cnpj: string;
+  dataUltimaVenda: string;
+  descricao: string;
+  nomBairro: string;
+  nomLogradouro: string;
+  razaoSocial: string;
+  valorultimaVenda: number;
+}
+
+// Tipos do retorno já formatado
+export interface BairroResumo {
+  bairro: string;
+  media: number;
+  postos: number;
+}
+
+export interface ValorResumo {
+  valor: number;
+  quantidade: number;
+}
+
+// Função convertida para TypeScript
+export function transformarDados(dados: DadoPosto[]) {
+  const bairros: Record<string, { soma: number; quantidade: number }> = {};
+  const valores: Record<string, { count: number }> = {};
+
+  dados.forEach(item => {
+    // --- AGRUPAMENTO POR BAIRRO ---
+    const bairro = item.nomBairro;
+
+    if (!bairros[bairro]) {
+      bairros[bairro] = { soma: 0, quantidade: 0 };
+    }
+
+    bairros[bairro].soma += item.valorultimaVenda;
+    bairros[bairro].quantidade++;
+
+    // --- AGRUPAMENTO POR VALOR ---
+    const preco = item.valorultimaVenda.toFixed(2); // padronizado
+
+    if (!valores[preco]) {
+      valores[preco] = { count: 0 };
+    }
+
+    valores[preco].count++;
+  });
+
+  // Converter para arrays formatados e prontos para gráfico
+  const porBairro: BairroResumo[] = Object.entries(bairros).map(
+    ([bairro, info]) => ({
+      bairro,
+      media: Number((info.soma / info.quantidade).toFixed(2)),
+      postos: info.quantidade,
+    })
+  );
+
+  const porValor: ValorResumo[] = Object.entries(valores).map(
+    ([valor, info]) => ({
+      valor: Number(valor),
+      quantidade: info.count,
+    })
+  );
+
+  return { porBairro, porValor };
+}
+
 
 export const ConsultarValorCombustivel = () => {
   const [dataTable, setDataTable] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dataForm, setDataForm] = useState<any[]>([]);
+  const [graficDataBairro, setGraficDataBairro] = useState<any[]>([]);
+  const [graficDataValor, setGraficDataValor] = useState<any[]>([]);
 
   useEffect(() => {
     console.log(dataForm)
@@ -31,6 +103,9 @@ export const ConsultarValorCombustivel = () => {
 
         // Verifica se é array ou se tem dados em uma propriedade específica
         const notas = Array.isArray(dados) ? dados : dados?.data ?? [];
+        const { porBairro, porValor } = transformarDados(notas);
+        setGraficDataBairro(porBairro)
+        setGraficDataValor(porValor)
         setDataTable(notas);
 
       } catch (err) {
@@ -51,14 +126,14 @@ export const ConsultarValorCombustivel = () => {
 
   return (
     <div>
-      <div className="flex h-auto mt-8 justify-evenly flex-direction: column;">
+      <div className="flex h-auto mt-8 justify-evenly flex-direction: column items-center ">
         <div className='w-[25em]'>
           <FormCombustivel setDataForm={setDataForm} />
         </div>
-        <div className="flex justify-center w-[60%] max-h-100">
+        <div className="flex justify-center w-[60%] max-h-100 min-h-full">
           {error && <p>{error}</p>}
           {loading ? (
-            <p>Carregando...</p>
+            <Loader/>
           ) : dataTable.length > 0 ? (
             <CompactTable
               data={dataTable}
@@ -89,14 +164,14 @@ export const ConsultarValorCombustivel = () => {
           )}
         </div>
       </div>
-      <div className="flex justify-center w-[100%] min-h-100 m-[30px]">
+      <div className="flex justify-center min-h-100 m-[30px] items-center ">
         {error && <p>{error}</p>}
         {loading ? (
-          <p>Carregando...</p>
+          <Loader/>
         ) : dataTable.length > 0 ? (
           <div className="flex justify-evenly w-[100%] m-[10px]">
-            <ValoresPorQuantidade />
-            <ValoresPorEstabelecimento />
+            <ValoresPorEstabelecimento chartData={graficDataBairro} />
+            <ValoresPorQuantidade chartData={graficDataValor}/>
           </div>
         ) : (
           <p>Nenhuma nota encontrada.</p>
